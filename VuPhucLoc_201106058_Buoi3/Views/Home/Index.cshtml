@@ -1,9 +1,9 @@
-﻿@model IEnumerable<VuPhucLoc_201106058_Buoi3.Models.Course>
+﻿@model VuPhucLoc_201106058_Buoi3.ViewModels.CoursesViewModel
 @{
     ViewBag.Title = "Home Page";
 }
     <ul class="course">
-        @foreach (var course in Model)
+        @foreach (var course in Model.UpcommingCourses)
             {
                 <li>
                     <div class="date">
@@ -17,14 +17,53 @@
                     <div class="details">
                         <span class="lecturer">
                             @course.Lecturer.Name
+                            @if (Model.ShowAction)
+                            {
+                                <button  style="color: purple; class="btn btn-default btn-sm js-toggle-follow" data-user-id="@course.LecturerId">Follow</button>
+                            }
                         </span>
+                        <br/>
                         <span class="category">
                             @course.Category.Name
                         </span>
-                    </div>
+                        @if (Model.ShowAction)
+                        {
+                            <button  data-course-id="@course.Id" class="btn btn-default btn-sm js-toggle-attendance">Going?</button>
+                        }
+                        </div>
                 </li>
             }
     </ul>
+@section scripts
+{
+       <script>
+           $(document).ready(function () {
+               $(".js-toggle-attendance").click(function (e) {
+                   var button = $(e.target);
+                   $.post("/api/attendances", { courseId: button.attr("data-course-id") })
+                       .done(function () {
+                           button
+                               .removeClass("btn-default")
+                               .addClass("btn-info")
+                               .text("Going");
+                       })
+                       .fail(function () {
+                           alert("Something failed!");
+                       });
+               });
+               $(".js-toggle-follow").click(function (e) {
+                   var button = $(e.target);
+                   $.post("/api/followings", { followeeId: button.attr("data-user-id") })
+                       .done(function () {
+                           button.text("Following");
+                       })
+                       .fail(function () {
+                           alert("Something failed!");
+                       });
+               });
+           });
+       </script> 
+}
 
 <main>
     <section class="row" aria-labelledby="aspnetTitle">

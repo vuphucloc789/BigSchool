@@ -10,6 +10,8 @@ namespace VuPhucLoc_201106058_Buoi3.Models
     {
         public int Id { get; set; }
 
+        public bool IsCanceled { get; set; }
+
         public ApplicationUser Lecturer { get; set; }
         [Required]
         public string LecturerId { get; set; }
